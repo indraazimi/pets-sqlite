@@ -8,11 +8,15 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PetCursorAdapter extends RecyclerView.Adapter<PetCursorAdapter.PetHolder> {
 
     private Context mContext;
     private View mEmptyView;
     private OnClickListener mListener;
+    private List<PetEntity> pets = new ArrayList<>();
 
     public PetCursorAdapter(Context context, View emptyView, OnClickListener listener) {
         mContext = context;
@@ -20,6 +24,14 @@ public class PetCursorAdapter extends RecyclerView.Adapter<PetCursorAdapter.PetH
         mListener = listener;
     }
 
+    public void setPets(List<PetEntity> pets) {
+        this.pets = pets;
+        if (pets == null || pets.size() == 0)
+            mEmptyView.setVisibility(View.VISIBLE);
+        else
+            mEmptyView.setVisibility(View.GONE);
+        notifyDataSetChanged();
+    }
 
     @Override
     public PetHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -29,12 +41,14 @@ public class PetCursorAdapter extends RecyclerView.Adapter<PetCursorAdapter.PetH
 
     @Override
     public void onBindViewHolder(PetHolder holder, int position) {
-
+        PetEntity currentPet = pets.get(position);
+        holder.nameTextView.setText(currentPet.getName());
+        holder.summaryTextView.setText(currentPet.getBreed());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return pets.size();
     }
 
     class PetHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

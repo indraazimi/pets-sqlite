@@ -21,20 +21,29 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.List;
+
 /**
  * Displays list of pets that were entered and stored in the app.
  */
 public class CatalogActivity extends AppCompatActivity {
 
-    PetCursorAdapter mCursorAdapter;
+    private PetCursorAdapter mCursorAdapter;
+    private PetViewModel petViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +60,8 @@ public class CatalogActivity extends AppCompatActivity {
             }
         });
 
+
+
         // Find the RecyclerView which will be populated with the pet data
         RecyclerView petRecyclerView = findViewById(R.id.list);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -59,10 +70,27 @@ public class CatalogActivity extends AppCompatActivity {
                 manager.getOrientation());
         petRecyclerView.addItemDecoration(divider);
 
+
+
         // Find empty view on the RecyclerView, so that it only shows when the list has 0 items.
         View emptyView = findViewById(R.id.empty_view);
 
+        mCursorAdapter = new PetCursorAdapter(this, emptyView, new PetCursorAdapter.OnClickListener() {
+            @Override
+            public void onItemClick(int id) {
+                Toast.makeText(CatalogActivity.this,"ID: "+id,Toast.LENGTH_LONG).show();
+            }
+        });
 
+        petViewModel = new ViewModelProvider(this).get(PetViewModel.class);
+//        petViewModel = ViewModelProviders.of(this).get(PetViewModel.class);
+        petViewModel.getAllPets().observe(this, new Observer<List<PetEntity>>() {
+            @Override
+            public void onChanged(List<PetEntity> petEntities) {
+                //update recycler view
+                mCursorAdapter.setPets(petEntities);
+            }
+        });
     }
 
     /**
