@@ -96,14 +96,16 @@ public class CatalogActivity extends AppCompatActivity {
      * Helper method to insert hardcoded pet data into the database. For debugging purposes only.
      */
     private void insertPet() {
-
+        petViewModel.insert(new PetEntity("Toto X","Terrier X",1,7));
+        Toast.makeText(this,"Data Inserted",Toast.LENGTH_SHORT).show();
     }
 
     /**
      * Helper method to delete all pets in the database.
      */
     private void deleteAllPets() {
-
+        petViewModel.deleteAll();
+        Toast.makeText(this,"All Data Deleted",Toast.LENGTH_SHORT).show();
     }
 
     @Override
