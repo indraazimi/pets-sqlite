@@ -9,12 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.pets.data.PetContract;
-
 public class PetCursorAdapter extends RecyclerView.Adapter<PetCursorAdapter.PetHolder> {
 
     private Context mContext;
-    private Cursor mCursor;
     private View mEmptyView;
     private OnClickListener mListener;
 
@@ -22,18 +19,6 @@ public class PetCursorAdapter extends RecyclerView.Adapter<PetCursorAdapter.PetH
         mContext = context;
         mEmptyView = emptyView;
         mListener = listener;
-    }
-
-    public void swapCursor(Cursor newCursor) {
-        if (mCursor != null) mCursor.close();
-
-        mCursor = newCursor;
-        if (newCursor == null || newCursor.getCount() == 0)
-            mEmptyView.setVisibility(View.VISIBLE);
-        else
-            mEmptyView.setVisibility(View.GONE);
-
-        notifyDataSetChanged();
     }
 
     @NonNull
@@ -45,19 +30,12 @@ public class PetCursorAdapter extends RecyclerView.Adapter<PetCursorAdapter.PetH
 
     @Override
     public void onBindViewHolder(@NonNull PetHolder holder, int position) {
-        mCursor.moveToPosition(position);
 
-        int indexName = mCursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_NAME);
-        int indexBreed = mCursor.getColumnIndex(PetContract.PetEntry.COLUMN_PET_BREED);
-
-        holder.nameTextView.setText(mCursor.getString(indexName));
-        holder.summaryTextView.setText(mCursor.getString(indexBreed));
     }
 
     @Override
     public int getItemCount() {
-        if(mCursor ==null) return 0;
-        return mCursor.getCount();
+        return 0;
     }
 
     class PetHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -78,9 +56,7 @@ public class PetCursorAdapter extends RecyclerView.Adapter<PetCursorAdapter.PetH
         public void onClick(View v) {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
-                mCursor.moveToPosition(position);
-                int indexId = mCursor.getColumnIndex(PetContract.PetEntry._ID);
-                mListener.onItemClick(mCursor.getInt(indexId));
+                mListener.onItemClick(position);
             }
         }
     }
