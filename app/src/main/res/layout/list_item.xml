@@ -11,7 +11,7 @@
      limitations under the License.
 -->
 <!-- Layout for a single list item in the list of pets -->
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -44,4 +44,4 @@
         app:layout_constraintTop_toBottomOf="@+id/name"
         tools:text="Terrier" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

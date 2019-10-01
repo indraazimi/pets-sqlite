@@ -1,13 +1,12 @@
 package com.example.android.pets;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public class PetCursorAdapter extends RecyclerView.Adapter<PetCursorAdapter.PetHolder> {
 
@@ -21,15 +20,15 @@ public class PetCursorAdapter extends RecyclerView.Adapter<PetCursorAdapter.PetH
         mListener = listener;
     }
 
-    @NonNull
+
     @Override
-    public PetHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PetHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.list_item, parent, false);
         return new PetHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PetHolder holder, int position) {
+    public void onBindViewHolder(PetHolder holder, int position) {
 
     }
 
