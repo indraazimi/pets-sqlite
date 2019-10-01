@@ -1,11 +1,13 @@
 package com.example.android.pets;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -33,8 +35,9 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetHolder> {
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
-    public PetHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public PetHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.list_item, parent, false);
         return new PetHolder(view);
     }

@@ -69,6 +69,7 @@ public class CatalogActivity extends AppCompatActivity {
 
 
 
+
         // Find empty view on the RecyclerView, so that it only shows when the list has 0 items.
         View emptyView = findViewById(R.id.empty_view);
 
@@ -78,6 +79,7 @@ public class CatalogActivity extends AppCompatActivity {
                 Toast.makeText(CatalogActivity.this,"ID: "+id,Toast.LENGTH_LONG).show();
             }
         });
+        petRecyclerView.setAdapter(mCursorAdapter);
 
         petViewModel = new ViewModelProvider(this).get(PetViewModel.class);
 //        petViewModel = ViewModelProviders.of(this).get(PetViewModel.class);
