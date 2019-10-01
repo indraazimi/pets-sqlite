@@ -24,11 +24,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,7 +39,7 @@ import java.util.List;
  */
 public class CatalogActivity extends AppCompatActivity {
 
-    private PetCursorAdapter mCursorAdapter;
+    private PetAdapter mCursorAdapter;
     private PetViewModel petViewModel;
 
     @Override
@@ -75,7 +72,7 @@ public class CatalogActivity extends AppCompatActivity {
         // Find empty view on the RecyclerView, so that it only shows when the list has 0 items.
         View emptyView = findViewById(R.id.empty_view);
 
-        mCursorAdapter = new PetCursorAdapter(this, emptyView, new PetCursorAdapter.OnClickListener() {
+        mCursorAdapter = new PetAdapter(this, emptyView, new PetAdapter.OnClickListener() {
             @Override
             public void onItemClick(int id) {
                 Toast.makeText(CatalogActivity.this,"ID: "+id,Toast.LENGTH_LONG).show();

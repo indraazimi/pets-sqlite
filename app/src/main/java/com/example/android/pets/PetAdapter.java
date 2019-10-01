@@ -11,14 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PetCursorAdapter extends RecyclerView.Adapter<PetCursorAdapter.PetHolder> {
+public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetHolder> {
 
     private Context mContext;
     private View mEmptyView;
     private OnClickListener mListener;
     private List<PetEntity> pets = new ArrayList<>();
 
-    public PetCursorAdapter(Context context, View emptyView, OnClickListener listener) {
+    public PetAdapter(Context context, View emptyView, OnClickListener listener) {
         mContext = context;
         mEmptyView = emptyView;
         mListener = listener;

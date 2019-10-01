@@ -15,6 +15,8 @@ public class PetViewModel extends AndroidViewModel {
 
     public PetViewModel(@NonNull Application application) {
         super(application);
+        petDao = PetDatabase.getInstance(application).petDao();
+        allPets = petDao.getAllPets();
     }
 
     public void insert(PetEntity petEntity){
