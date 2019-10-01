@@ -24,6 +24,7 @@ public abstract class PetDatabase extends RoomDatabase {
                     "pet_database")
                     .fallbackToDestructiveMigration()
                     .allowMainThreadQueries() // SHOULD NOT BE USED IN PRODUCTION !!!
+                    .addCallback(roomCallback)
                     .build();
         }
         return instance;
@@ -32,6 +33,7 @@ public abstract class PetDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
+            new PopulateDbAsyncTask(instance).execute();
         }
     };
 
