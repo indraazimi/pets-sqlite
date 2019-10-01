@@ -1,10 +1,13 @@
 package com.example.android.pets;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 @Database(entities = {PetEntity.class}, version = 1)
 public abstract class PetDatabase extends RoomDatabase {
@@ -25,5 +28,22 @@ public abstract class PetDatabase extends RoomDatabase {
         }
         return instance;
     }
+    private static RoomDatabase.Callback roomCallback = new RoomDatabase.Callback(){
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+            super.onCreate(db);
+        }
+    };
 
+    private static class PopulateDbAsyncTask extends AsyncTask<Void,Void,Void>{
+        private PetDao petDao;
+        private PopulateDbAsyncTask(PetDatabase db){
+            petDao = db.petDao();
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            petDao.insert(new PetEntity("Toto","Terrier",1,7));
+            return null;
+        }
+    }
 }
