@@ -43,4 +43,20 @@ public class PetEntity {
     public int getWeight() {
         return weight;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setBreed(String breed) {
+        this.breed = breed;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
 }

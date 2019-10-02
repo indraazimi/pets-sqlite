@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -41,6 +42,7 @@ public class CatalogActivity extends AppCompatActivity {
 
     private PetAdapter mPetAdapter;
     private PetViewModel petViewModel;
+    private LiveData<List<PetEntity>> liveData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,15 +77,20 @@ public class CatalogActivity extends AppCompatActivity {
 
         mPetAdapter = new PetAdapter(this, emptyView, new PetAdapter.OnClickListener() {
             @Override
-            public void onItemClick(int id) {
-                Toast.makeText(CatalogActivity.this,"ID: "+id,Toast.LENGTH_LONG).show();
+            public void onItemClick(int position) {
+                PetEntity pet = liveData.getValue().get(position);
+                Intent intent = new Intent(CatalogActivity.this,EditorActivity.class);
+                intent.putExtra("idPet",pet.getId());
+                startActivity(intent);
+//                Toast.makeText(CatalogActivity.this,"ID: "+pet.getId()+" and pos: "+position,Toast.LENGTH_LONG).show();
             }
         });
         petRecyclerView.setAdapter(mPetAdapter);
 
         petViewModel = new ViewModelProvider(this).get(PetViewModel.class);
 //        petViewModel = ViewModelProviders.of(this).get(PetViewModel.class);
-        petViewModel.getAllPets().observe(this, new Observer<List<PetEntity>>() {
+        liveData = petViewModel.getAllPets();
+        liveData.observe(this, new Observer<List<PetEntity>>() {
             @Override
             public void onChanged(List<PetEntity> petEntities) {
                 //update recycler view

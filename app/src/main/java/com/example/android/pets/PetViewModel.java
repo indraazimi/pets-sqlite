@@ -39,4 +39,8 @@ public class PetViewModel extends AndroidViewModel {
         return allPets;
     }
 
+    public PetEntity getPetById(int id){
+        return petDao.getPetById(id);
+    }
+
 }

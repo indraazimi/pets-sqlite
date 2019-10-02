@@ -77,7 +77,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetHolder> {
     }
 
     public interface OnClickListener {
-        void onItemClick(int id);
+        void onItemClick(int position);
     }
 
 }

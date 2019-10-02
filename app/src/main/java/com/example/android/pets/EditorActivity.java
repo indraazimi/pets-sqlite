@@ -19,6 +19,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -27,36 +28,38 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 import androidx.lifecycle.ViewModelProvider;
 
 /**
- * Allows user to create a new pet or edit an existing one.
+ * Allows user to create a new petChoosen or edit an existing one.
  */
 public class EditorActivity extends AppCompatActivity {
 
     private PetViewModel petViewModel;
     private int idPet;
+    private PetEntity petChoosen;
 
     /**
-     * EditText field to enter the pet's name
+     * EditText field to enter the petChoosen's name
      */
     private EditText mNameEditText;
 
     /**
-     * EditText field to enter the pet's breed
+     * EditText field to enter the petChoosen's breed
      */
     private EditText mBreedEditText;
 
     /**
-     * EditText field to enter the pet's weight
+     * EditText field to enter the petChoosen's weight
      */
     private EditText mWeightEditText;
 
     /**
-     * EditText field to enter the pet's gender
+     * EditText field to enter the petChoosen's gender
      */
     private Spinner mGenderSpinner;
 
@@ -66,7 +69,7 @@ public class EditorActivity extends AppCompatActivity {
     private int mGender = 0;
 
     /**
-     * Boolean flag that keeps track of whether the pet has been edited (true) or not (false)
+     * Boolean flag that keeps track of whether the petChoosen has been edited (true) or not (false)
      */
     private boolean mPetHasChanged = false;
 
@@ -104,20 +107,26 @@ public class EditorActivity extends AppCompatActivity {
         mGenderSpinner.setOnTouchListener(mTouchListener);
 
         // Examine the intent that was used to launch this activity,
-        // in order to figure out if we're creating a new pet or editing an existing one.
+        // in order to figure out if we're creating a new petChoosen or editing an existing one.
         idPet = getIntent().getIntExtra("idPet",-1);
+
         if(idPet == -1){
             setTitle(getString(R.string.editor_activity_title_new_pet));
             invalidateOptionsMenu();
         }else{
             setTitle(getString(R.string.editor_activity_title_edit_pet));
+            petChoosen = petViewModel.getPetById(idPet);
+
+            mNameEditText.setText(petChoosen.getName());
+            mBreedEditText.setText(petChoosen.getBreed());
+            mWeightEditText.setText(petChoosen.getWeight()+"");
         }
 
         setupSpinner();
     }
 
     /**
-     * Setup the dropdown spinner that allows the user to select the gender of the pet.
+     * Setup the dropdown spinner that allows the user to select the gender of the petChoosen.
      */
     private void setupSpinner() {
         // Create adapter for spinner. The list options are from the String array it will use
@@ -156,7 +165,7 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     /**
-     * Get user input from editor and save pet into database.
+     * Get user input from editor and save petChoosen into database.
      */
     private void savePet() {
         // Read from input fields
@@ -165,7 +174,22 @@ public class EditorActivity extends AppCompatActivity {
         String breedString = mBreedEditText.getText().toString().trim();
         String weightString = mWeightEditText.getText().toString().trim();
 
-        petViewModel.insert(new PetEntity(nameString,breedString,mGender,Integer.parseInt(weightString)));
+        try {
+            if(!nameString.equals("") && !breedString.equals("")){
+                if(petChoosen!=null){
+                    petChoosen.setName(nameString);
+                    petChoosen.setBreed(breedString);
+                    petChoosen.setWeight(Integer.parseInt(weightString));
+                    petViewModel.update(petChoosen);
+                }else {
+                    petViewModel.insert(new PetEntity(nameString, breedString, mGender, Integer.parseInt(weightString)));
+                }
+            }else{
+                Toast.makeText(this,"Neither Name or Breed should be empty",Toast.LENGTH_SHORT).show();
+            }
+        }catch (NumberFormatException ex){
+            Toast.makeText(this,"Weight should be number",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -197,7 +221,7 @@ public class EditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                // Save pet to database
+                // Save petChoosen to database
                 savePet();
                 // Exit activity
                 finish();
@@ -209,7 +233,7 @@ public class EditorActivity extends AppCompatActivity {
                 return true;
             // Respond to a click on the "Up" arrow button in the app bar
             case android.R.id.home:
-                // If the pet hasn't changed, continue with navigating up to parent activity
+                // If the petChoosen hasn't changed, continue with navigating up to parent activity
                 // which is the {@link CatalogActivity}.
                 if (!mPetHasChanged) {
                     NavUtils.navigateUpFromSameTask(EditorActivity.this);
@@ -240,7 +264,7 @@ public class EditorActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
-        // If the pet hasn't changed, continue with handling back button press
+        // If the petChoosen hasn't changed, continue with handling back button press
         if (!mPetHasChanged) {
             super.onBackPressed();
             return;
@@ -278,7 +302,7 @@ public class EditorActivity extends AppCompatActivity {
         builder.setNegativeButton(R.string.keep_editing, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Keep editing" button, so dismiss the dialog
-                // and continue editing the pet.
+                // and continue editing the petChoosen.
                 if (dialog != null) {
                     dialog.dismiss();
                 }
@@ -291,7 +315,7 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     /**
-     * Prompt the user to confirm that they want to delete this pet.
+     * Prompt the user to confirm that they want to delete this petChoosen.
      */
     private void showDeleteConfirmationDialog() {
         // Create an AlertDialog.Builder and set the message, and click listeners
@@ -300,14 +324,14 @@ public class EditorActivity extends AppCompatActivity {
         builder.setMessage(R.string.delete_dialog_msg);
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User clicked the "Delete" button, so delete the pet.
+                // User clicked the "Delete" button, so delete the petChoosen.
                 deletePet();
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Cancel" button, so dismiss the dialog
-                // and continue editing the pet.
+                // and continue editing the petChoosen.
                 if (dialog != null) {
                     dialog.dismiss();
                 }
@@ -320,11 +344,11 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     /**
-     * Perform the deletion of the pet in the database.
+     * Perform the deletion of the petChoosen in the database.
      */
     private void deletePet() {
-        // Only perform the delete if this is an existing pet.
-
+        // Only perform the delete if this is an existing petChoosen.
+        petViewModel.delete(petChoosen);
 
         // Close the activity
         finish();

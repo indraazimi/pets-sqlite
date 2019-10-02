@@ -26,6 +26,6 @@ public interface PetDao {
     @Query("SELECT * FROM pet_table ORDER BY name ASC")
     LiveData<List<PetEntity>> getAllPets();
 
-    @Query("SELECT * FROM pet_table WHERE id = :id")
-    LiveData<PetEntity> getPetById(int id);
+    @Query("SELECT * FROM pet_table WHERE id = :id LIMIT 1")
+    PetEntity getPetById(int id);
 }
