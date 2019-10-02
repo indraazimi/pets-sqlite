@@ -23,6 +23,9 @@ public interface PetDao {
     @Query("DELETE FROM pet_table")
     void deleteAllPets();
 
-    @Query("SELECT * from pet_table ORDER BY name ASC")
+    @Query("SELECT * FROM pet_table ORDER BY name ASC")
     LiveData<List<PetEntity>> getAllPets();
+
+    @Query("SELECT * FROM pet_table WHERE id = :id")
+    LiveData<PetEntity> getPetById(int id);
 }

@@ -30,12 +30,15 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
+import androidx.lifecycle.ViewModelProvider;
 
 /**
  * Allows user to create a new pet or edit an existing one.
  */
 public class EditorActivity extends AppCompatActivity {
 
+    private PetViewModel petViewModel;
+    private int idPet;
 
     /**
      * EditText field to enter the pet's name
@@ -84,6 +87,8 @@ public class EditorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
+        petViewModel = new ViewModelProvider(this).get(PetViewModel.class);
+
         // Find all relevant views that we will need to read user input from
         mNameEditText = findViewById(R.id.edit_pet_name);
         mBreedEditText = findViewById(R.id.edit_pet_breed);
@@ -97,6 +102,16 @@ public class EditorActivity extends AppCompatActivity {
         mBreedEditText.setOnTouchListener(mTouchListener);
         mWeightEditText.setOnTouchListener(mTouchListener);
         mGenderSpinner.setOnTouchListener(mTouchListener);
+
+        // Examine the intent that was used to launch this activity,
+        // in order to figure out if we're creating a new pet or editing an existing one.
+        idPet = getIntent().getIntExtra("idPet",-1);
+        if(idPet == -1){
+            setTitle(getString(R.string.editor_activity_title_new_pet));
+            invalidateOptionsMenu();
+        }else{
+            setTitle(getString(R.string.editor_activity_title_edit_pet));
+        }
 
         setupSpinner();
     }
@@ -150,7 +165,7 @@ public class EditorActivity extends AppCompatActivity {
         String breedString = mBreedEditText.getText().toString().trim();
         String weightString = mWeightEditText.getText().toString().trim();
 
-
+        petViewModel.insert(new PetEntity(nameString,breedString,mGender,Integer.parseInt(weightString)));
     }
 
     @Override
@@ -169,9 +184,10 @@ public class EditorActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         // Hide the "Delete" menu item.
-        MenuItem menuItem = menu.findItem(R.id.action_delete);
-        menuItem.setVisible(false);
-
+        if(idPet==-1) {
+            MenuItem menuItem = menu.findItem(R.id.action_delete);
+            menuItem.setVisible(false);
+        }
         return true;
     }
 

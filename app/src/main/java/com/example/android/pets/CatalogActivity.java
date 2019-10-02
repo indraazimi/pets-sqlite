@@ -39,7 +39,7 @@ import java.util.List;
  */
 public class CatalogActivity extends AppCompatActivity {
 
-    private PetAdapter mCursorAdapter;
+    private PetAdapter mPetAdapter;
     private PetViewModel petViewModel;
 
     @Override
@@ -73,13 +73,13 @@ public class CatalogActivity extends AppCompatActivity {
         // Find empty view on the RecyclerView, so that it only shows when the list has 0 items.
         View emptyView = findViewById(R.id.empty_view);
 
-        mCursorAdapter = new PetAdapter(this, emptyView, new PetAdapter.OnClickListener() {
+        mPetAdapter = new PetAdapter(this, emptyView, new PetAdapter.OnClickListener() {
             @Override
             public void onItemClick(int id) {
                 Toast.makeText(CatalogActivity.this,"ID: "+id,Toast.LENGTH_LONG).show();
             }
         });
-        petRecyclerView.setAdapter(mCursorAdapter);
+        petRecyclerView.setAdapter(mPetAdapter);
 
         petViewModel = new ViewModelProvider(this).get(PetViewModel.class);
 //        petViewModel = ViewModelProviders.of(this).get(PetViewModel.class);
@@ -87,15 +87,17 @@ public class CatalogActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<PetEntity> petEntities) {
                 //update recycler view
-                mCursorAdapter.setPets(petEntities);
+                mPetAdapter.setPets(petEntities);
             }
         });
+
+
     }
 
     /**
      * Helper method to insert hardcoded pet data into the database. For debugging purposes only.
      */
-    private void insertPet() {
+    private void insertDummyPet() {
         petViewModel.insert(new PetEntity("Toto X","Terrier X",1,7));
         Toast.makeText(this,"Data Inserted",Toast.LENGTH_SHORT).show();
     }
@@ -122,7 +124,7 @@ public class CatalogActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Insert dummy data" menu option
             case R.id.action_insert_dummy_data:
-                insertPet();
+                insertDummyPet();
                 return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
