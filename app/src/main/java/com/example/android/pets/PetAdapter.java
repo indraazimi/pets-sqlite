@@ -1,6 +1,7 @@
 package com.example.android.pets;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,16 +9,31 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-public class PetCursorAdapter extends RecyclerView.Adapter<PetCursorAdapter.PetHolder> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetHolder> {
 
     private Context mContext;
     private View mEmptyView;
     private OnClickListener mListener;
+    private List<PetEntity> pets = new ArrayList<>();
 
-    public PetCursorAdapter(Context context, View emptyView, OnClickListener listener) {
+    public PetAdapter(Context context, View emptyView, OnClickListener listener) {
         mContext = context;
         mEmptyView = emptyView;
         mListener = listener;
+    }
+
+    public void setPets(List<PetEntity> pets) {
+        Log.d("jumlah","jumlah: "+pets.size());
+
+        this.pets = pets;
+        if (pets == null || pets.size() == 0)
+            mEmptyView.setVisibility(View.VISIBLE);
+        else
+            mEmptyView.setVisibility(View.GONE);
+        notifyDataSetChanged();
     }
 
 
@@ -29,12 +45,14 @@ public class PetCursorAdapter extends RecyclerView.Adapter<PetCursorAdapter.PetH
 
     @Override
     public void onBindViewHolder(PetHolder holder, int position) {
-
+        PetEntity currentPet = pets.get(position);
+        holder.nameTextView.setText(currentPet.getName());
+        holder.summaryTextView.setText(currentPet.getBreed());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return pets.size();
     }
 
     class PetHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -61,7 +79,7 @@ public class PetCursorAdapter extends RecyclerView.Adapter<PetCursorAdapter.PetH
     }
 
     public interface OnClickListener {
-        void onItemClick(int id);
+        void onItemClick(int position);
     }
 
 }

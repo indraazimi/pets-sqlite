@@ -17,6 +17,7 @@ package com.example.android.pets;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -66,6 +67,7 @@ public class EditorActivity extends AppCompatActivity {
      * Boolean flag that keeps track of whether the pet has been edited (true) or not (false)
      */
     private boolean mPetHasChanged = false;
+    private PetEntity currentPet;
 
     /**
      * OnTouchListener that listens for any user touches on a View, implying that they are modifying
@@ -84,6 +86,13 @@ public class EditorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
+        // Examine the intent that was used to launch this activity,
+        // in order to figure out if we're creating a new pet or editing an existing one.
+        Intent intent = getIntent();
+        currentPet = intent.getParcelableExtra("petExtra");
+
+
+
         // Find all relevant views that we will need to read user input from
         mNameEditText = findViewById(R.id.edit_pet_name);
         mBreedEditText = findViewById(R.id.edit_pet_breed);
@@ -99,6 +108,27 @@ public class EditorActivity extends AppCompatActivity {
         mGenderSpinner.setOnTouchListener(mTouchListener);
 
         setupSpinner();
+
+        if (currentPet == null) {
+            // This is a new pet, so change the app bar to say "Add a Pet"
+            setTitle(getString(R.string.editor_activity_title_new_pet));
+
+            // Invalidate the options menu, so the "Delete" menu option can be hidden.
+            // (It doesn't make sense to delete a pet that hasn't been created yet.)
+            invalidateOptionsMenu();
+        } else {
+            // Otherwise this is an existing pet, so change app bar to say "Edit Pet"
+            setTitle(getString(R.string.editor_activity_title_edit_pet));
+            mNameEditText.setText(currentPet.getName());
+            mBreedEditText.setText(currentPet.getBreed());
+            mWeightEditText.setText(currentPet.getWeight()+"");
+            mGenderSpinner.setSelection(currentPet.getGender());
+
+            // Initialize a loader to read the pet data from the database
+            // and display the current values in the editor
+            //TODO: write action to edit pet
+        }
+
     }
 
     /**
@@ -150,7 +180,27 @@ public class EditorActivity extends AppCompatActivity {
         String breedString = mBreedEditText.getText().toString().trim();
         String weightString = mWeightEditText.getText().toString().trim();
 
+        if (currentPet == null &&
+                TextUtils.isEmpty(nameString) && TextUtils.isEmpty(breedString) &&
+                TextUtils.isEmpty(weightString) && mGender == 0) {
+            // Since no fields were modified, we can return early without creating a new pet.
+            // No need to create ContentValues and no need to do any ContentProvider operations.
+            return;
+        }
 
+
+        if (currentPet == null) {
+            // This is a NEW pet, so insert a new pet into the database,
+            // Show a toast message depending on whether or not the insertion was successful.
+            //TODO: Action to save pet
+        } else {
+            // Otherwise this is an EXISTING pet, so update the pet with previous content
+            // and pass in the new ContentValues. Pass in null for the selection and selection args
+            // because mCurrentPetUri will already identify the correct row in the database that
+            // we want to modify.
+            //TODO: Action to edit pet
+
+        }
     }
 
     @Override
@@ -169,8 +219,10 @@ public class EditorActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         // Hide the "Delete" menu item.
-        MenuItem menuItem = menu.findItem(R.id.action_delete);
-        menuItem.setVisible(false);
+        if(currentPet==null){
+            MenuItem menuItem = menu.findItem(R.id.action_delete);
+            menuItem.setVisible(false);
+        }
 
         return true;
     }
@@ -308,6 +360,7 @@ public class EditorActivity extends AppCompatActivity {
      */
     private void deletePet() {
         // Only perform the delete if this is an existing pet.
+        //TODO: perform delete
 
 
         // Close the activity

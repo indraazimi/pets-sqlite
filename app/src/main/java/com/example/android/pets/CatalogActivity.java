@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -29,17 +30,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
+
 /**
  * Displays list of pets that were entered and stored in the app.
  */
 public class CatalogActivity extends AppCompatActivity {
 
-    PetCursorAdapter mCursorAdapter;
+    private ArrayList<PetEntity> pets;
+    private PetAdapter mPetAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalog);
+
+        //populate pets with dummy data
+        pets = new ArrayList<>();
+        pets.add(new PetEntity("Toto","Terrier",1,3));
 
         // Setup FAB to open EditorActivity
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -62,14 +70,29 @@ public class CatalogActivity extends AppCompatActivity {
         // Find empty view on the RecyclerView, so that it only shows when the list has 0 items.
         View emptyView = findViewById(R.id.empty_view);
 
+        //open editor activity with parcelable as an extra
+        mPetAdapter = new PetAdapter(this, emptyView, new PetAdapter.OnClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                //open editor activity with parcelable as an extra
+                Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+                intent.putExtra("petExtra", pets.get(position));
+                startActivity(intent);
+            }
+        });
+        mPetAdapter.setPets(pets);
 
+        petRecyclerView.setAdapter(mPetAdapter);
     }
 
     /**
      * Helper method to insert hardcoded pet data into the database. For debugging purposes only.
      */
-    private void insertPet() {
-
+    private void insertDummyPet() {
+        //Insert with dummy data to Array List
+        pets.add(new PetEntity("Toto X","Terrier X",1,7));
+        mPetAdapter.setPets(pets);
+        Toast.makeText(this,getString(R.string.action_insert_dummy_data),Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -93,7 +116,7 @@ public class CatalogActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Insert dummy data" menu option
             case R.id.action_insert_dummy_data:
-                insertPet();
+                insertDummyPet();
                 return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
